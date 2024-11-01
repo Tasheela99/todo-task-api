@@ -8,7 +8,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseTaskDto {
+public class ResponseTodoDto {
     private String taskId;
     private String title;
     private String description;

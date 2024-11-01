@@ -3,7 +3,6 @@ package com.todo.todo_api.entity;
 import com.todo.todo_api.entity.enums.PriorityType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.Date;
 
@@ -13,11 +12,11 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "tasks")
-public class Task {
+@Table(name = "todos")
+public class Todo {
     @Id
-    @Column(name = "task_id",length = 80)
-    private String taskId;
+    @Column(name = "todo_id",length = 80)
+    private String todoId;
 
     @Column(name = "title",length = 100)
     private String title;

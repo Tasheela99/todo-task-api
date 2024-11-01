@@ -47,6 +47,6 @@ public class User {
     private UserRole userRole;
 
     @OneToMany(mappedBy="user",cascade = CascadeType.ALL)
-    private Set<Task> tasks;
+    private Set<Todo> todos;
 
 }

@@ -12,7 +12,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestTaskDto {
+public class RequestTodoDto {
     private String title;
     private String description;
     private PriorityType priorityType;

@@ -1,9 +1,9 @@
 package com.todo.todo_api.api;
 
-import com.todo.todo_api.dto.paginated.PaginatedTaskDto;
-import com.todo.todo_api.dto.request.RequestTaskDto;
-import com.todo.todo_api.dto.response.ResponseTaskDto;
-import com.todo.todo_api.service.TaskService;
+import com.todo.todo_api.dto.paginated.PaginatedTodoDto;
+import com.todo.todo_api.dto.request.RequestTodoDto;
+import com.todo.todo_api.dto.response.ResponseTodoDto;
+import com.todo.todo_api.service.TodoService;
 import com.todo.todo_api.util.StandardResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,22 +12,22 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/tasks")
+@RequestMapping("/api/v1/todos")
 @RequiredArgsConstructor
-public class TaskController {
-    private final TaskService taskService;
+public class TodoController {
+    private final TodoService todoService;
 
     @PostMapping(path = "/user/create")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<StandardResponse> create(
             @RequestHeader("Authorization") String token,
-            @RequestBody RequestTaskDto dto
+            @RequestBody RequestTodoDto dto
     ) {
-        taskService.createTask(token,dto);
+        todoService.createTodo(token,dto);
         return new ResponseEntity<>(
                 new StandardResponse(
                         201,
-                        "Task Created",
+                        "Todo Created",
                         null
                 ), HttpStatus.CREATED
         );
@@ -38,13 +38,13 @@ public class TaskController {
     public ResponseEntity<StandardResponse> update(
             @RequestHeader("Authorization") String token,
             @PathVariable(value = "id") String id,
-            @RequestBody RequestTaskDto dto
+            @RequestBody RequestTodoDto dto
     ) {
-        boolean isUpdated = taskService.updateTask(token,id,dto);
+        boolean isUpdated = todoService.updateTodo(token,id,dto);
         return new ResponseEntity<>(
                 new StandardResponse(
                         200,
-                        "Task Updated",
+                        "Todo Updated",
                         isUpdated
                 ), HttpStatus.OK
         );
@@ -57,11 +57,11 @@ public class TaskController {
             @PathVariable(value = "id") String id,
             @PathVariable(value = "status") boolean status
     ) {
-        boolean isUpdated = taskService.updateTaskState(token,id,status);
+        boolean isUpdated = todoService.updateTodoState(token,id,status);
         return new ResponseEntity<>(
                 new StandardResponse(
                         200,
-                        "Task State Updated",
+                        "Todo State Updated",
                         isUpdated
                 ), HttpStatus.OK
         );
@@ -69,15 +69,15 @@ public class TaskController {
 
     @GetMapping(path = "/user/get-by-id/{id}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<StandardResponse> getTaskById(
+    public ResponseEntity<StandardResponse> getTodoById(
             @RequestHeader("Authorization") String token,
             @PathVariable String id
     ) {
-        ResponseTaskDto dto  = taskService.getTaskById(token,id);
+        ResponseTodoDto dto  = todoService.getTodoById(token,id);
         return new ResponseEntity<>(
                 new StandardResponse(
                         200,
-                        "Task "+id,
+                        "Todo "+id,
                         dto
                 ), HttpStatus.OK
         );
@@ -91,11 +91,11 @@ public class TaskController {
             @RequestParam(value = "size") int size,
             @RequestParam(value = "searchText",required = false) String searchText
     ) {
-        PaginatedTaskDto dto = taskService.getAllTasks(token,page, size, searchText);
+        PaginatedTodoDto dto = todoService.getAllTodos(token,page, size, searchText);
         return new ResponseEntity<>(
                 new StandardResponse(
                         200,
-                        "Tasks",
+                        "Todos",
                         dto
                 ), HttpStatus.OK
         );
@@ -106,11 +106,11 @@ public class TaskController {
     public ResponseEntity<StandardResponse> delete(
             @RequestHeader("Authorization") String token,
             @PathVariable(value = "id") String id) {
-        boolean isDeleted = taskService.deleteTask(token,id);
+        boolean isDeleted = todoService.deleteTodo(token,id);
         return new ResponseEntity<>(
                 new StandardResponse(
                         204,
-                        "Task Deleted",
+                        "Todo Deleted",
                         isDeleted),
                 HttpStatus.NO_CONTENT
         );
