@@ -95,7 +95,7 @@ public class TodoController {
         return new ResponseEntity<>(
                 new StandardResponse(
                         200,
-                        "Todos",
+                        "All Todos",
                         dto
                 ), HttpStatus.OK
         );

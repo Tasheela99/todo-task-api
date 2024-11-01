@@ -93,10 +93,10 @@ public class TodoServiceImpl implements TodoService {
         if (user == null) {
             throw new UnAuthorizedException("User Not Found");
         }
-        List<ResponseTodoDto> list = todoRepo.findAllTodos(searchText, PageRequest.of(page, size)).stream().map(
+        List<ResponseTodoDto> list = todoRepo.findAllTodos(searchText, PageRequest.of(page, size),user.getUserId()).stream().map(
                 this::converter
         ).collect(Collectors.toList());
-        long count = todoRepo.countAllTodos(searchText);
+        long count = todoRepo.countAllTodos(searchText,user.getUserId());
         return PaginatedTodoDto.builder().taskDtoList(list).dataCount(count).build();
     }
 
