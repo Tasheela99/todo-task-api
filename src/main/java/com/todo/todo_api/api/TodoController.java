@@ -10,11 +10,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/v1/todos")
 @RequiredArgsConstructor
 public class TodoController {
+    private final Logger LOGGER = LoggerFactory.getLogger(TodoController.class);
     private final TodoService todoService;
 
     @PostMapping(path = "/user/create")
@@ -23,13 +26,12 @@ public class TodoController {
             @RequestHeader("Authorization") String token,
             @RequestBody RequestTodoDto dto
     ) {
-        todoService.createTodo(token,dto);
+        LOGGER.info("Received request to create a todo for user with token: {}", token);
+        todoService.createTodo(token, dto);
+        LOGGER.info("Todo created successfully for user with token: {}", token);
         return new ResponseEntity<>(
-                new StandardResponse(
-                        201,
-                        "Todo Created",
-                        null
-                ), HttpStatus.CREATED
+                new StandardResponse(201, "Todo Created", null),
+                HttpStatus.CREATED
         );
     }
 
@@ -40,13 +42,16 @@ public class TodoController {
             @PathVariable(value = "id") String id,
             @RequestBody RequestTodoDto dto
     ) {
-        boolean isUpdated = todoService.updateTodo(token,id,dto);
+        LOGGER.info("Received request to update todo with ID: {} for user with token: {}", id, token);
+        boolean isUpdated = todoService.updateTodo(token, id, dto);
+        if (isUpdated) {
+            LOGGER.info("Todo with ID: {} updated successfully", id);
+        } else {
+            LOGGER.warn("Failed to update todo with ID: {}", id);
+        }
         return new ResponseEntity<>(
-                new StandardResponse(
-                        200,
-                        "Todo Updated",
-                        isUpdated
-                ), HttpStatus.OK
+                new StandardResponse(200, "Todo Updated", isUpdated),
+                HttpStatus.OK
         );
     }
 
@@ -57,13 +62,12 @@ public class TodoController {
             @PathVariable(value = "id") String id,
             @PathVariable(value = "status") boolean status
     ) {
-        boolean isUpdated = todoService.updateTodoState(token,id,status);
+        LOGGER.info("Received request to update state of todo with ID: {} to {} for user with token: {}", id, status, token);
+        boolean isUpdated = todoService.updateTodoState(token, id, status);
+        LOGGER.info("Todo state with ID: {} updated to {}: {}", id, status, isUpdated);
         return new ResponseEntity<>(
-                new StandardResponse(
-                        200,
-                        "Todo State Updated",
-                        isUpdated
-                ), HttpStatus.OK
+                new StandardResponse(200, "Todo State Updated", isUpdated),
+                HttpStatus.OK
         );
     }
 
@@ -73,13 +77,12 @@ public class TodoController {
             @RequestHeader("Authorization") String token,
             @PathVariable String id
     ) {
-        ResponseTodoDto dto  = todoService.getTodoById(token,id);
+        LOGGER.info("Received request to fetch todo with ID: {} for user with token: {}", id, token);
+        ResponseTodoDto dto = todoService.getTodoById(token, id);
+        LOGGER.info("Todo with ID: {} fetched successfully", id);
         return new ResponseEntity<>(
-                new StandardResponse(
-                        200,
-                        "Todo "+id,
-                        dto
-                ), HttpStatus.OK
+                new StandardResponse(200, "Todo " + id, dto),
+                HttpStatus.OK
         );
     }
 
@@ -89,15 +92,14 @@ public class TodoController {
             @RequestHeader("Authorization") String token,
             @RequestParam(value = "page") int page,
             @RequestParam(value = "size") int size,
-            @RequestParam(value = "searchText",required = false) String searchText
+            @RequestParam(value = "searchText", required = false) String searchText
     ) {
-        PaginatedTodoDto dto = todoService.getAllTodos(token,page, size, searchText);
+        LOGGER.info("Received request to fetch all todos for user with token: {}, page: {}, size: {}, searchText: {}", token, page, size, searchText);
+        PaginatedTodoDto dto = todoService.getAllTodos(token, page, size, searchText);
+        LOGGER.info("Todos fetched successfully for user with token: {}, total count: {}", token, dto.getTaskDtoList().size());
         return new ResponseEntity<>(
-                new StandardResponse(
-                        200,
-                        "All Todos",
-                        dto
-                ), HttpStatus.OK
+                new StandardResponse(200, "All Todos", dto),
+                HttpStatus.OK
         );
     }
 
@@ -106,14 +108,16 @@ public class TodoController {
     public ResponseEntity<StandardResponse> delete(
             @RequestHeader("Authorization") String token,
             @PathVariable(value = "id") String id) {
-        boolean isDeleted = todoService.deleteTodo(token,id);
+        LOGGER.info("Received request to delete todo with ID: {} for user with token: {}", id, token);
+        boolean isDeleted = todoService.deleteTodo(token, id);
+        if (isDeleted) {
+            LOGGER.info("Todo with ID: {} deleted successfully", id);
+        } else {
+            LOGGER.warn("Failed to delete todo with ID: {}", id);
+        }
         return new ResponseEntity<>(
-                new StandardResponse(
-                        204,
-                        "Todo Deleted",
-                        isDeleted),
+                new StandardResponse(204, "Todo Deleted", isDeleted),
                 HttpStatus.NO_CONTENT
         );
     }
-
 }
